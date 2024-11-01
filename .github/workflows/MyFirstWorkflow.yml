@@ -1,9 +1,13 @@
 name: My First Workflow
 
-on:
+on: 
   push:
-    branches:
+    branches: 
       - main
+  
+  repository_dispatch:
+    types: [event1, event2]
+    
   workflow_dispatch:
     inputs:
       homedrive:
@@ -25,11 +29,11 @@ on:
         description: 'Environment to run tests against'
         type: environment
         required: true 
-
+  
 jobs:
   MyFirstJob:
     runs-on: ubuntu-latest
-
+    
     steps:
       - run: |
           echo "Homedrive: ${{ inputs.homedrive }}"
@@ -38,14 +42,19 @@ jobs:
           echo "Environment ${{ inputs.environment }}"
         name: Workflow Inputs
         if: ${{ github.event_name == 'workflow_dispatch' }}
-        
+      
+      - run: |
+          echo "Payload: ${{ toJSON(github.event.client_payload) }}"
+        name: Payload
+        if: ${{ github.event_name == 'repository_dispatch' }}
+      
       - run: echo "👋 Hello World!"
-
+      
       - name: Checkout
-        uses: actions/checkout@v4.2.2
-
+        uses: actions/checkout@v4 
+      
       - name: List files in repository
         run: |
-          echo "The repository ${{ github.repository }} contains the following files:"
+          echo "The repository ${{ github.repository }} contains th efollowing files:"
           tree
-  
+      
